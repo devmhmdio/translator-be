@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ['writer', 'admin'],
     required: true,
+    default: 'writer',
   },
   its: {
     type: Number,
