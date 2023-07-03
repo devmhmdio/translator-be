@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
   },
   userRole: {
     type: String,
+    enum: ['writer', 'admin'],
     required: true,
   },
   its: {
