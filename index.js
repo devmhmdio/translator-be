@@ -45,18 +45,7 @@ io.on('connection', (socket) => {
   console.log('New client connected');
 
   socket.on('update_pad', async (data) => {
-    let writingPad = await WritingPad.findOne({ writer: data.writer });
-    if (writingPad) {
-        writingPad.content = data.padContent;
-    } else {
-        writingPad = new WritingPad(data);
-    }
-    await writingPad.save();
-    const writingPads = await WritingPad.find({});
-    io.emit('update_pad', writingPads);
-    if (displayedWriter === data.writer) {
-      io.emit('display_pad', data.padContent);
-    }
+    io.emit('update_pad', data);
   });
 
   socket.on('display_pad', async (writer) => {
