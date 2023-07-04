@@ -7,7 +7,7 @@ const WritingPadSchema = new mongoose.Schema({
   },
   content: {
     type: String,
-    required: true,
+    required: false,
   },
   createdAt: {
     type: Date,

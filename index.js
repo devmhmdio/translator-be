@@ -71,8 +71,8 @@ io.on('connection', (socket) => {
 });
 
 app.get('/pads', async (req, res) => {
-    const writingPads = await WritingPad.find({});
-    res.json(pads);
+  const writingPads = await WritingPad.find({});
+  res.json(writingPads);
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
