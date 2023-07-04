@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require('../models/User');
 
 const getUsers = async (req, res) => {
   const users = await User.find();
@@ -13,7 +13,8 @@ const createUser = async (req, res) => {
     password: req.body.password,
   });
   user.save();
-  res.send(user);
+  const token = jwt.sign({ id: user._id }, 'asdfghjkL007', { expiresIn: '1d' });
+  res.send({ user, token });
 };
 
 const updateUser = async (req, res) => {
@@ -33,7 +34,12 @@ const getUserById = async (req, res) => {
 
 const getUserByIts = async (req, res) => {
   const user = await User.findOne({ its: req.query.its });
-  res.send(user);
+  if (user) {
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1d' });
+    res.send({ user, token });
+  } else {
+    res.status(404).send('User not found');
+  }
 };
 
 const deleteUser = async (req, res) => {
