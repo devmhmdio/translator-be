@@ -31,8 +31,13 @@ const getUserById = async (req, res) => {
   res.send(user);
 };
 
+const getUserByIts = async (req, res) => {
+  const user = await User.findOne({ its: req.query.its });
+  res.send(user);
+};
+
 const deleteUser = async (req, res) => {
-  const user = await User.findByIdAndDelete(req.params.id);
+  await User.findByIdAndDelete(req.params.id);
   res.send('User deleted');
 };
 
@@ -42,4 +47,5 @@ module.exports = {
   updateUser,
   getUserById,
   deleteUser,
+  getUserByIts,
 };
