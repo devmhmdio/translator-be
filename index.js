@@ -55,6 +55,14 @@ io.on('connection', (socket) => {
     io.emit('display_pad', writingPad ? writingPad.content : '');
   });
 
+  socket.on('cast_screen_request', ({ id }) => {
+    // Look up the data in the socket. 
+    // This heavily depends on how you stored the data in the socket.
+    const content = socket.pads[id]; 
+
+    io.emit('cast_screen', content);
+  });
+
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
