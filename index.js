@@ -6,27 +6,27 @@ const cors = require('cors');
 const WritingPad = require('./models/WritingPad');
 const dotenv = require('dotenv');
 dotenv.config();
-
+let writerPads = {};
+let displayedWriter = null;
+let currentlyCastingWriterId;
 const port = process.env.PORT || 8000;
 
 const app = express();
 const server = require('http').Server(app);
 const io = socketIo(server, {
   cors: {
-    // origin: "https://translator-fe.vercel.app",
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-    allowedHeaders: ["my-custom-header"],
-    credentials: true
-  }
+    origin: 'https://translator-fe.vercel.app',
+    // origin: 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['my-custom-header'],
+    credentials: true,
+  },
 });
 app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(router);
-
-let writerPads = {};
 
 mongoose
   .connect(process.env.MONGODB_URL, {
@@ -40,14 +40,14 @@ mongoose
     console.log(err);
   });
 
-let displayedWriter = null;
 
 io.on('connection', (socket) => {
   console.log('New client connected');
 
   socket.on('update_pad', async (data) => {
+    writerPads[data.writerId] = data.content;
     io.emit('update_pad', data);
-  });
+  });  
 
   socket.on('display_pad', async (writer) => {
     displayedWriter = writer;
@@ -55,13 +55,17 @@ io.on('connection', (socket) => {
     io.emit('display_pad', writingPad ? writingPad.content : '');
   });
 
-  socket.on('cast_screen_request', ({ id }) => {
-    // Look up the data in the socket. 
-    // This heavily depends on how you stored the data in the socket.
-    const content = socket.pads[id]; 
-
-    io.emit('cast_screen', content);
+  // listen for cast screen requests
+  socket.on('cast_screen_request', ({ writerId }) => {
+    // currentlyCastingWriterId = writerId;
+    console.log('writerId: ', writerId);
+    const padContent = writerPads[writerId];
+    io.emit('cast_screen', padContent);
   });
+
+  socket.on('stop_cast', () => {
+    currentlyCastingWriterId = null;
+  });  
 
   socket.on('disconnect', () => {
     console.log('Client disconnected');
