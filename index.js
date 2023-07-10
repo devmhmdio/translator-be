@@ -42,10 +42,13 @@ mongoose
 
 
 io.on('connection', (socket) => {
-  console.log('New client connected');
+  // console.log('New client connected');
 
   socket.on('update_pad', async (data) => {
     writerPads[data.writerId] = data.content;
+    if (currentlyCastingWriterId === data.writerId) {
+      io.emit('cast_screen', data.content);
+    }
     io.emit('update_pad', data);
   });  
 
@@ -56,19 +59,20 @@ io.on('connection', (socket) => {
   });
 
   // listen for cast screen requests
-  socket.on('cast_screen_request', ({ writerId }) => {
-    // currentlyCastingWriterId = writerId;
-    console.log('writerId: ', writerId);
-    const padContent = writerPads[writerId];
+  socket.on('cast_screen_request', ({ writerId, pads }) => {
+    const padContent = pads[writerId];
+    currentlyCastingWriterId = writerId;
+    console.log('Emitting cast_screen with content:', padContent);
     io.emit('cast_screen', padContent);
   });
 
   socket.on('stop_cast', () => {
     currentlyCastingWriterId = null;
+    io.emit('cast_screen', 'No preview available');
   });  
 
   socket.on('disconnect', () => {
-    console.log('Client disconnected');
+    // console.log('Client disconnected');
   });
 });
 
