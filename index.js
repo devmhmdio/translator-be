@@ -48,6 +48,7 @@ io.on('connection', (socket) => {
     writerPads[data.writerId] = data.content;
     io.emit('update_pad', data);
     if (currentlyCastingWriterId === data.writerId) {
+      console.log(`Casting screen update for writer ${data.writerId}`);
       io.emit('cast_screen', data.content);
     }
   });  
