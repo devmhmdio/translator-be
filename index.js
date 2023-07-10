@@ -46,10 +46,10 @@ io.on('connection', (socket) => {
 
   socket.on('update_pad', async (data) => {
     writerPads[data.writerId] = data.content;
+    io.emit('update_pad', data);
     if (currentlyCastingWriterId === data.writerId) {
       io.emit('cast_screen', data.content);
     }
-    io.emit('update_pad', data);
   });  
 
   socket.on('display_pad', async (writer) => {
