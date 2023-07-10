@@ -45,10 +45,10 @@ io.on('connection', (socket) => {
   // console.log('New client connected');
 
   socket.on('update_pad', async (data) => {
-    writerPads[data.writerId] = data.content;
+    writerPads[data.writer] = data.content;
     io.emit('update_pad', data);
-    if (currentlyCastingWriterId === data.writerId) {
-      console.log(`Casting screen update for writer ${data.writerId}`);
+    if (currentlyCastingWriterId === data.writer) {
+      console.log(`Casting screen update for writer ${data.writer}`);
       io.emit('cast_screen', data.content);
     }
   });  
