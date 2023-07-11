@@ -11,5 +11,10 @@ router.post('/user', createUser);
 router.put('/user/:id', updateUser);
 router.get('/user/:id', getUserById);
 router.delete('/user/:id', deleteUser);
+router.get('/events', getEvents);
+router.post('/event', createEvent);
+router.put('/event/:id', updateEvent);
+router.get('/event/:id', getEventById);
+router.delete('/event/:id', deleteEvent);
 
 module.exports = router;
