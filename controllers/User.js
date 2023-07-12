@@ -6,6 +6,11 @@ const getUsers = async (req, res) => {
   res.send(users);
 };
 
+const getWriters = async (req, res) => {
+  const writers = await User.find({ userRole: 'writer' });
+  res.send(writers);
+};
+
 const createUser = async (req, res) => {
   const user = new User({
     name: req.body.name,
@@ -55,4 +60,5 @@ module.exports = {
   getUserById,
   deleteUser,
   getUserByIts,
+  getWriters,
 };

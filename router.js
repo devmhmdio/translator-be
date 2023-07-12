@@ -16,5 +16,6 @@ router.post('/event', createEvent);
 router.put('/event/:id', updateEvent);
 router.get('/event/:id', getEventById);
 router.delete('/event/:id', deleteEvent);
+router.get('/writers', getWriters);
 
 module.exports = router;
