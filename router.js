@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { getEvents, createEvent, updateEvent, getEventById, deleteEvent } = require('./controllers/Event');
 const { getUsers, createUser, updateUser, getUserById, deleteUser, getUserByIts, getWriters } = require('./controllers/User');
 
 router.get('/', (req, res) => {
