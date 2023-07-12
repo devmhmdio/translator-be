@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const EventSchema = new mongoose.Schema({
   waaz: {
-    type: Number,
+    type: String,
     required: true,
   },
   hijriDate: {
@@ -10,11 +10,11 @@ const EventSchema = new mongoose.Schema({
     required: true,
   },
   englishDate: {
-    type: Date,
+    type: String,
     required: true,
   },
   writers: [{
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.String,
     ref: 'User',
   }],
   createdAt: {
