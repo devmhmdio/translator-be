@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { getEvents, createEvent, updateEvent, getEventById, deleteEvent } = require('./controllers/Event');
+const { getEvents, createEvent, updateEvent, getEventById, deleteEvent, getEventByWriterName } = require('./controllers/Event');
 const { getUsers, createUser, updateUser, getUserById, deleteUser, getUserByIts, getWriters } = require('./controllers/User');
 
 router.get('/', (req, res) => {
@@ -16,6 +16,7 @@ router.get('/events', getEvents);
 router.post('/event', createEvent);
 router.put('/event/:id', updateEvent);
 router.get('/event/:id', getEventById);
+router.get('/event-writer/:name', getEventByWriterName);
 router.delete('/event/:id', deleteEvent);
 router.get('/writers', getWriters);
 

@@ -21,6 +21,11 @@ const getEventById = async (req, res) => {
   res.send(event);
 };
 
+const getEventByWriterName = async (req, res) => {
+  const event = await Event.find({ writers: { $in: [req.params.name] } });
+  res.send(event);
+};
+
 const updateEvent = async (req, res) => {
   const event = await Event.findByIdAndUpdate(req.params.id, {
     writers: req.body.writers,
@@ -42,4 +47,5 @@ module.exports = {
   getEventById,
   updateEvent,
   deleteEvent,
+  getEventByWriterName,
 };

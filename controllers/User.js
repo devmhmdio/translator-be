@@ -41,7 +41,7 @@ const getUserById = async (req, res) => {
 const getUserByIts = async (req, res) => {
   const user = await User.findOne({ its: req.query.its });
   if (user) {
-    const token = jwt.sign({ id: user._id, userRole: user.userRole }, 'asdfghjkL007', { expiresIn: '1d' });
+    const token = jwt.sign({ id: user._id, userRole: user.userRole, name: user.name }, 'asdfghjkL007', { expiresIn: '1d' });
     res.send({ user, token });
   } else {
     res.status(404).send('User not found');
