@@ -11,6 +11,11 @@ const getWriters = async (req, res) => {
   res.send(writers);
 };
 
+const getGlossaryWriters = async (req, res) => {
+  const glossaryWriters = await User.find({ userRole: 'glossary_writer' });
+  res.send(glossaryWriters);
+};
+
 const createUser = async (req, res) => {
   const user = new User({
     name: req.body.name,
@@ -61,4 +66,5 @@ module.exports = {
   deleteUser,
   getUserByIts,
   getWriters,
+  getGlossaryWriters,
 };
