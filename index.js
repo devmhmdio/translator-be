@@ -18,7 +18,7 @@ const io = socketIo(server, {
   cors: {
     origin: 'https://translator-fe.vercel.app',
     // origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['my-custom-header'],
     credentials: true,
   },
