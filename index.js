@@ -16,8 +16,9 @@ const app = express();
 const server = require('http').Server(app);
 const io = socketIo(server, {
   cors: {
-    origin: 'https://translator-fe.vercel.app',
+    // origin: 'https://translator-fe.vercel.app',
     // origin: 'http://localhost:3000',
+    origin: "*",
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['my-custom-header'],
     credentials: true,
