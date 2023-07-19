@@ -54,6 +54,8 @@ io.on('connection', (socket) => {
     }
   });
 
+  let castScreenQueue = [];
+
   socket.on('display_pad', async (writer) => {
     displayedWriter = writer;
     const writingPad = await WritingPad.findOne({ writer });
@@ -61,35 +63,53 @@ io.on('connection', (socket) => {
   });
 
   // listen for cast screen requests
-  socket.on('cast_screen_request', async ({ writerId, pads }) => {
-    const padContent = pads[writerId];
-    currentlyCastingWriterId = writerId;
-    console.log('Emitting cast_screen with content:', padContent);
-    io.emit('cast_screen', padContent);
+  // socket.on('cast_screen_request', async ({ writerId, pads }) => {
+  //   const padContent = pads[writerId];
+  //   currentlyCastingWriterId = writerId;
+  //   console.log('Emitting cast_screen with content:', padContent);
+  //   io.emit('cast_screen', padContent);
 
-    // Check if a document for this writerId already exists
-    let isLiveDoc = await IsLive.findOne({ writerId: writerId });
+  //   // Check if a document for this writerId already exists
+  //   let isLiveDoc = await IsLive.findOne({ writerId: writerId });
 
-    // If no document exists, create a new one
-    if (!isLiveDoc) {
-      isLiveDoc = new IsLive({
-        isLive: true,
-        writerId: writerId,
-      });
-    }
-    // If a document does exist, update its isLive field
-    else {
-      isLiveDoc.isLive = true;
-    }
+  //   // If no document exists, create a new one
+  //   if (!isLiveDoc) {
+  //     isLiveDoc = new IsLive({
+  //       isLive: true,
+  //       writerId: writerId,
+  //     });
+  //   }
+  //   // If a document does exist, update its isLive field
+  //   else {
+  //     isLiveDoc.isLive = true;
+  //   }
 
-    // Save the document
-    isLiveDoc.save();
+  //   // Save the document
+  //   isLiveDoc.save();
 
-    // Set isLive to false for all other documents
-    IsLive.updateMany(
-      { writerId: { $ne: writerId } },
-      { $set: { isLive: false } },
-    );
+  //   // Set isLive to false for all other documents
+  //   IsLive.updateMany(
+  //     { writerId: { $ne: writerId } },
+  //     { $set: { isLive: false } },
+  //   );
+  // });
+
+  socket.on('cast_screen', function(data) {
+    // split the data into characters and add them to the queue
+    const characters = data.padContent.split('');
+    castScreenQueue.push(...characters);
+
+    // start a timer to send characters from the queue
+    const sendIntervalId = setInterval(function() {
+      if (castScreenQueue.length > 0) {
+        // if there are characters in the queue, send the first one and remove it from the queue
+        const char = castScreenQueue.shift();
+        socket.broadcast.emit('cast_screen', char);
+      } else {
+        // if there are no characters left in the queue, stop the timer
+        clearInterval(sendIntervalId);
+      }
+    }, 200); // Adjust this value to change the delay between characters
   });
 
   socket.on('stop_cast', async (id) => {
