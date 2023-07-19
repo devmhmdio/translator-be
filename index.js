@@ -47,12 +47,33 @@ mongoose
 io.on('connection', (socket) => {
   // console.log('New client connected');
 
+  // socket.on('update_pad', async (data) => {
+  //   writerPads[data.writer] = data.content;
+  //   io.emit('update_pad', data);
+  //   if (currentlyCastingWriterId === data.writer) {
+  //     console.log(`Casting screen update for writer ${data.writer}`);
+  //     io.emit('cast_screen', data.content);
+  //   }
+  // });
+
   socket.on('update_pad', async (data) => {
     writerPads[data.writer] = data.content;
     io.emit('update_pad', data);
     if (currentlyCastingWriterId === data.writer) {
       console.log(`Casting screen update for writer ${data.writer}`);
-      io.emit('cast_screen', data.content);
+      let padContentArray = data.content.split(' ');
+
+      // Emit each word when the array length is 10 or more
+      let index = -10;
+      console.log('pad content array', padContentArray);
+      if (padContentArray.length > 10) {
+        while (index < padContentArray.length) {
+          console.log('pad conent array', padContentArray[index]);
+          io.emit('cast_screen', padContentArray[index]);
+          // io.emit('cast_screen', data.content);
+          index += 1;
+        }
+      }
     }
   });
 
