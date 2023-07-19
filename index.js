@@ -64,13 +64,10 @@ io.on('connection', (socket) => {
       let padContentArray = data.content.split(' ');
 
       // Emit each word when the array length is 10 or more
-      let index = -10;
-      console.log('pad content array', padContentArray);
-      if (padContentArray.length > 10) {
+      let index = 0;
+      if (padContentArray.length >= 10) {
         while (index < padContentArray.length) {
-          console.log('pad conent array', padContentArray[index]);
           io.emit('cast_screen', padContentArray[index]);
-          // io.emit('cast_screen', data.content);
           index += 1;
         }
       }
