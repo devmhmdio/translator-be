@@ -93,13 +93,17 @@ io.on('connection', (socket) => {
   // });
 
   socket.on('cast_screen_request', async ({ writerId, pads }) => {
-    const padContent = pads[writerId];
+    let padContent = pads[writerId];
     currentlyCastingWriterId = writerId;
-    console.log('Emitting cast_screen with content:', padContent);
-    let padContentArray = [];
-    padContentArray.push(padContent);
-    if (padContentArray.length >= 3) {
-      io.emit('cast_screen', padContentArray);
+    let padContentArray = padContent.split(" ");
+
+    // Emit each word when the array length is 10 or more
+    let index = 0;
+    if (padContentArray.length >= 10) {
+        while(index < padContentArray.length) {
+            io.emit('cast_screen', padContentArray[index]);
+            index += 1;
+        }
     }
 
     // Check if a document for this writerId already exists
