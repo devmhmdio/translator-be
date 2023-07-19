@@ -94,22 +94,12 @@ io.on('connection', (socket) => {
     );
   });
 
-  socket.on('cast_screen', function(data) {
-    // split the data into characters and add them to the queue
-    const characters = data.padContent.split('');
-    castScreenQueue.push(...characters);
-
-    // start a timer to send characters from the queue
-    const sendIntervalId = setInterval(function() {
-      if (castScreenQueue.length > 0) {
-        // if there are characters in the queue, send the first one and remove it from the queue
-        const char = castScreenQueue.shift();
-        socket.broadcast.emit('cast_screen', char);
-      } else {
-        // if there are no characters left in the queue, stop the timer
-        clearInterval(sendIntervalId);
-      }
-    }, 200); // Adjust this value to change the delay between characters
+  socket.on("cast_screen", (content) => {
+    let words = content.split(' ');
+    let lastWord = words[words.length - 1];
+  
+    // Now we only emit the last word
+    io.sockets.emit("cast_screen", lastWord);
   });
 
   socket.on('stop_cast', async (id) => {
