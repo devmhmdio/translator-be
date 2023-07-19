@@ -14,18 +14,19 @@ const port = process.env.PORT || 8000;
 
 const app = express();
 const server = require('http').Server(app);
-const io = socketIo(server);
-// const io = socketIo(server, {
-//   cors: {
-//     // origin: 'https://translator-fe.vercel.app',
-//     // origin: 'http://localhost:3000',
-//     origin: '*',
-//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//     allowedHeaders: ['my-custom-header'],
-//     credentials: true,
-//   },
-// });
-// app.use(cors());
+// const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    // origin: 'https://translator-fe.vercel.app',
+    origin: 'https://www.waaztranslations.com',
+    // origin: 'http://localhost:3000',
+    // origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['my-custom-header'],
+    credentials: true,
+  },
+});
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
