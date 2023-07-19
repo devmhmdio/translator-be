@@ -18,7 +18,7 @@ const io = socketIo(server, {
   cors: {
     // origin: 'https://translator-fe.vercel.app',
     // origin: 'http://localhost:3000',
-    origin: "*",
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['my-custom-header'],
     credentials: true,
@@ -53,8 +53,6 @@ io.on('connection', (socket) => {
       io.emit('cast_screen', data.content);
     }
   });
-
-  let castScreenQueue = [];
 
   socket.on('display_pad', async (writer) => {
     displayedWriter = writer;
@@ -92,14 +90,6 @@ io.on('connection', (socket) => {
       { writerId: { $ne: writerId } },
       { $set: { isLive: false } },
     );
-  });
-
-  socket.on("cast_screen", (content) => {
-    let words = content.split(' ');
-    let lastWord = words[words.length - 1];
-  
-    // Now we only emit the last word
-    io.sockets.emit("cast_screen", lastWord);
   });
 
   socket.on('stop_cast', async (id) => {
