@@ -15,8 +15,9 @@ const port = process.env.PORT || 8000;
 const app = express();
 const server = require('http').Server(app);
 // const io = socketIo(server);
-const io = socketIo(server, {
-  cors: {
+const io = socketIo(server);
+app.use(
+  cors({
     // origin: 'https://translator-fe.vercel.app',
     origin: 'https://www.waaztranslations.com',
     // origin: 'http://localhost:3000',
@@ -24,9 +25,8 @@ const io = socketIo(server, {
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['my-custom-header'],
     credentials: true,
-  },
-});
-app.use(cors());
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -115,17 +115,17 @@ io.on('connection', (socket) => {
   socket.on('cast_screen_request', async ({ writerId, pads }) => {
     let padContent = pads[writerId];
     currentlyCastingWriterId = writerId;
-    let padContentArray = padContent.split(" ");
+    let padContentArray = padContent.split(' ');
 
     // Emit each word when the array length is 10 or more
     let index = -10;
-    console.log('pad content array', padContentArray)
+    console.log('pad content array', padContentArray);
     if (padContentArray.length > 10) {
-        while(index < padContentArray.length) {
-            console.log('pad conent array', padContentArray[index])
-            io.emit('cast_screen', padContentArray[index]);
-            index += 1;
-        }
+      while (index < padContentArray.length) {
+        console.log('pad conent array', padContentArray[index]);
+        io.emit('cast_screen', padContentArray[index]);
+        index += 1;
+      }
     }
 
     // Check if a document for this writerId already exists
@@ -149,7 +149,7 @@ io.on('connection', (socket) => {
     // Set isLive to false for all other documents
     IsLive.updateMany(
       { writerId: { $ne: writerId } },
-      { $set: { isLive: false } },
+      { $set: { isLive: false } }
     );
   });
 
@@ -160,11 +160,14 @@ io.on('connection', (socket) => {
       return;
     }
 
-    await IsLive.findOneAndUpdate({
-      writerId: currentlyCastingWriterId,
-    }, {
-      isLive: false,
-    });
+    await IsLive.findOneAndUpdate(
+      {
+        writerId: currentlyCastingWriterId,
+      },
+      {
+        isLive: false,
+      }
+    );
   });
 
   socket.on('disconnect', () => {
