@@ -99,8 +99,10 @@ io.on('connection', (socket) => {
 
     // Emit each word when the array length is 10 or more
     let index = 0;
+    console.log('pad content array', padContentArray)
     if (padContentArray.length >= 10) {
         while(index < padContentArray.length) {
+            console.log('pad conent array', padContentArray[index])
             io.emit('cast_screen', padContentArray[index]);
             index += 1;
         }
