@@ -63,36 +63,36 @@ io.on('connection', (socket) => {
   });
 
   // listen for cast screen requests
-  // socket.on('cast_screen_request', async ({ writerId, pads }) => {
-  //   const padContent = pads[writerId];
-  //   currentlyCastingWriterId = writerId;
-  //   console.log('Emitting cast_screen with content:', padContent);
-  //   io.emit('cast_screen', padContent);
+  socket.on('cast_screen_request', async ({ writerId, pads }) => {
+    const padContent = pads[writerId];
+    currentlyCastingWriterId = writerId;
+    console.log('Emitting cast_screen with content:', padContent);
+    io.emit('cast_screen', padContent);
 
-  //   // Check if a document for this writerId already exists
-  //   let isLiveDoc = await IsLive.findOne({ writerId: writerId });
+    // Check if a document for this writerId already exists
+    let isLiveDoc = await IsLive.findOne({ writerId: writerId });
 
-  //   // If no document exists, create a new one
-  //   if (!isLiveDoc) {
-  //     isLiveDoc = new IsLive({
-  //       isLive: true,
-  //       writerId: writerId,
-  //     });
-  //   }
-  //   // If a document does exist, update its isLive field
-  //   else {
-  //     isLiveDoc.isLive = true;
-  //   }
+    // If no document exists, create a new one
+    if (!isLiveDoc) {
+      isLiveDoc = new IsLive({
+        isLive: true,
+        writerId: writerId,
+      });
+    }
+    // If a document does exist, update its isLive field
+    else {
+      isLiveDoc.isLive = true;
+    }
 
-  //   // Save the document
-  //   isLiveDoc.save();
+    // Save the document
+    isLiveDoc.save();
 
-  //   // Set isLive to false for all other documents
-  //   IsLive.updateMany(
-  //     { writerId: { $ne: writerId } },
-  //     { $set: { isLive: false } },
-  //   );
-  // });
+    // Set isLive to false for all other documents
+    IsLive.updateMany(
+      { writerId: { $ne: writerId } },
+      { $set: { isLive: false } },
+    );
+  });
 
   socket.on('cast_screen', function(data) {
     // split the data into characters and add them to the queue
