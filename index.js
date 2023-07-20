@@ -2,7 +2,7 @@ const express = require('express');
 const router = require('./router');
 const mongoose = require('mongoose');
 const socketIo = require('socket.io');
-// const cors = require('cors'); // disbale cors
+const cors = require('cors');
 const WritingPad = require('./models/WritingPad');
 const IsLive = require('./models/IsLive');
 const dotenv = require('dotenv');
@@ -14,7 +14,17 @@ const port = process.env.PORT || 8000;
 
 const app = express();
 const server = require('http').Server(app);
-const io = socketIo(server);
+// const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: '*',
+  },
+});
+app.use(
+  cors({
+    origin: '*',
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
