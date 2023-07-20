@@ -2,7 +2,7 @@ const express = require('express');
 const router = require('./router');
 const mongoose = require('mongoose');
 const socketIo = require('socket.io');
-const cors = require('cors');
+// const cors = require('cors'); // disbale cors
 const WritingPad = require('./models/WritingPad');
 const IsLive = require('./models/IsLive');
 const dotenv = require('dotenv');
@@ -14,29 +14,7 @@ const port = process.env.PORT || 8000;
 
 const app = express();
 const server = require('http').Server(app);
-// const io = socketIo(server);
-const io = socketIo(server, {
-  cors: {
-    // origin: 'https://translator-fe.vercel.app',
-    origin: 'https://www.waaztranslations.com',
-    // origin: 'http://localhost:3000',
-    // origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['my-custom-header'],
-    credentials: true,
-  },
-});
-app.use(
-  cors({
-    // origin: 'https://translator-fe.vercel.app',
-    origin: 'https://www.waaztranslations.com',
-    // origin: 'http://localhost:3000',
-    // origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['my-custom-header'],
-    credentials: true,
-  })
-);
+const io = socketIo(server);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
