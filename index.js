@@ -45,30 +45,12 @@ mongoose
 io.on('connection', (socket) => {
   // console.log('New client connected');
 
-  // socket.on('update_pad', async (data) => {
-  //   writerPads[data.writer] = data.content;
-  //   io.emit('update_pad', data);
-  //   if (currentlyCastingWriterId === data.writer) {
-  //     console.log(`Casting screen update for writer ${data.writer}`);
-  //     io.emit('cast_screen', data.content);
-  //   }
-  // });
-
   socket.on('update_pad', async (data) => {
     writerPads[data.writer] = data.content;
     io.emit('update_pad', data);
     if (currentlyCastingWriterId === data.writer) {
       console.log(`Casting screen update for writer ${data.writer}`);
-      let padContentArray = data.content.split(' ');
-
-      // Emit each word when the array length is 10 or more
-      let index = 0;
-      if (padContentArray.length >= 10) {
-        while (index < padContentArray.length) {
-          io.emit('cast_screen', padContentArray[index]);
-          index += 1;
-        }
-      }
+      io.emit('cast_screen', data.content);
     }
   });
 
@@ -79,52 +61,11 @@ io.on('connection', (socket) => {
   });
 
   // listen for cast screen requests
-  // socket.on('cast_screen_request', async ({ writerId, pads }) => {
-  //   const padContent = pads[writerId];
-  //   currentlyCastingWriterId = writerId;
-  //   console.log('Emitting cast_screen with content:', padContent);
-  //   io.emit('cast_screen', padContent);
-
-  //   // Check if a document for this writerId already exists
-  //   let isLiveDoc = await IsLive.findOne({ writerId: writerId });
-
-  //   // If no document exists, create a new one
-  //   if (!isLiveDoc) {
-  //     isLiveDoc = new IsLive({
-  //       isLive: true,
-  //       writerId: writerId,
-  //     });
-  //   }
-  //   // If a document does exist, update its isLive field
-  //   else {
-  //     isLiveDoc.isLive = true;
-  //   }
-
-  //   // Save the document
-  //   isLiveDoc.save();
-
-  //   // Set isLive to false for all other documents
-  //   IsLive.updateMany(
-  //     { writerId: { $ne: writerId } },
-  //     { $set: { isLive: false } },
-  //   );
-  // });
-
   socket.on('cast_screen_request', async ({ writerId, pads }) => {
-    let padContent = pads[writerId];
+    const padContent = pads[writerId];
     currentlyCastingWriterId = writerId;
-    let padContentArray = padContent.split(' ');
-
-    // Emit each word when the array length is 10 or more
-    let index = -10;
-    console.log('pad content array', padContentArray);
-    if (padContentArray.length > 10) {
-      while (index < padContentArray.length) {
-        console.log('pad conent array', padContentArray[index]);
-        io.emit('cast_screen', padContentArray[index]);
-        index += 1;
-      }
-    }
+    console.log('Emitting cast_screen with content:', padContent);
+    io.emit('cast_screen', padContent);
 
     // Check if a document for this writerId already exists
     let isLiveDoc = await IsLive.findOne({ writerId: writerId });
@@ -147,9 +88,50 @@ io.on('connection', (socket) => {
     // Set isLive to false for all other documents
     IsLive.updateMany(
       { writerId: { $ne: writerId } },
-      { $set: { isLive: false } }
+      { $set: { isLive: false } },
     );
   });
+
+  // socket.on('cast_screen_request', async ({ writerId, pads }) => {
+  //   let padContent = pads[writerId];
+  //   currentlyCastingWriterId = writerId;
+  //   let padContentArray = padContent.split(' ');
+
+  //   // Emit each word when the array length is 10 or more
+  //   let index = -10;
+  //   console.log('pad content array', padContentArray);
+  //   if (padContentArray.length > 10) {
+  //     while (index < padContentArray.length) {
+  //       console.log('pad conent array', padContentArray[index]);
+  //       io.emit('cast_screen', padContentArray[index]);
+  //       index += 1;
+  //     }
+  //   }
+
+  //   // Check if a document for this writerId already exists
+  //   let isLiveDoc = await IsLive.findOne({ writerId: writerId });
+
+  //   // If no document exists, create a new one
+  //   if (!isLiveDoc) {
+  //     isLiveDoc = new IsLive({
+  //       isLive: true,
+  //       writerId: writerId,
+  //     });
+  //   }
+  //   // If a document does exist, update its isLive field
+  //   else {
+  //     isLiveDoc.isLive = true;
+  //   }
+
+  //   // Save the document
+  //   isLiveDoc.save();
+
+  //   // Set isLive to false for all other documents
+  //   IsLive.updateMany(
+  //     { writerId: { $ne: writerId } },
+  //     { $set: { isLive: false } }
+  //   );
+  // });
 
   socket.on('stop_cast', async (id) => {
     io.emit('cast_screen', 'No preview available');
